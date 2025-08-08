@@ -62,11 +62,7 @@ async function createApplePlaylist(
   return data;
 }
 
-async function getApplePlaylists(
-  devToken: string,
-  userToken: string,
-  storefrontId: string
-) {
+async function getApplePlaylists(devToken: string, userToken: string) {
   // get library playlists (single call)
   const url = `https://api.music.apple.com/v1/me/library/playlists`;
   const response = await fetch(url, {
@@ -86,7 +82,16 @@ async function getApplePlaylists(
     name: string;
     description: string;
     images: { url: string }[];
-  }> = (data.data || []).map((p: any) => {
+  }> = (data.data || []).map((p: {
+    id: string;
+    attributes?: {
+      name?: string;
+      description?: string;
+      artwork?: {
+        url?: string;
+      };
+    };
+  }) => {
     const artworkUrl: string | undefined = p?.attributes?.artwork?.url;
     return {
       id: p.id,
@@ -132,9 +137,7 @@ async function getApplePlaylists(
     items: playlistItems,
   } satisfies Playlists;
 }
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-
+export async function GET() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -170,8 +173,7 @@ export async function GET(request: NextRequest) {
   const devToken = await getAppleDeveloperToken();
   const playlists = await getApplePlaylists(
     devToken,
-    appleAccount.appleMusicUserToken,
-    appleAccount.storefrontId || "us"
+    appleAccount.appleMusicUserToken
   );
   return NextResponse.json(playlists);
 }

@@ -18,7 +18,6 @@ export default function TransferCenter() {
     setSpotifyLoginState,
     setAppleMusicLoginState,
     musicUserToken,
-    musicStorefront,
     setMusicUserToken,
     setMusicStorefront,
     setDevToken,
@@ -169,10 +168,11 @@ export default function TransferCenter() {
     [spotifyPlaylistLink, startSseTransfer]
   );
 
-  const waitForMusicKit = (): Promise<unknown> =>
-    new Promise((resolve) => {
+  const waitForMusicKit = useCallback((): Promise<unknown> => {
+    return new Promise((resolve) => {
       if (typeof window !== "undefined" && "MusicKit" in window) {
-        return resolve((window as unknown as { MusicKit: unknown }).MusicKit);
+        resolve((window as unknown as { MusicKit: unknown }).MusicKit);
+        return;
       }
       document.addEventListener(
         "musickitloaded",
@@ -180,6 +180,7 @@ export default function TransferCenter() {
         { once: true }
       );
     });
+  }, []);
 
   const handleConnectAppleMusic = useCallback(async () => {
     setFetchError(null);

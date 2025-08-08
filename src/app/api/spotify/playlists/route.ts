@@ -3,7 +3,7 @@ import { getUser } from "@/lib/database";
 import { prisma } from "@/lib/prisma";
 import { Playlists } from "@/models/playlist";
 import { headers } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 async function getSpotifyPlaylists(token: string) {
   const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
@@ -64,7 +64,7 @@ async function getSpotifyPlaylists(token: string) {
   return playlists;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

@@ -2,11 +2,11 @@ import { auth } from "@/lib/auth";
 import { getUser } from "@/lib/database";
 import { getAppleDeveloperToken } from "@/lib/utils";
 import { headers } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
