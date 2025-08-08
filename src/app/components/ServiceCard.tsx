@@ -25,7 +25,7 @@ type Props = {
   playlistLink?: string;
   onPlaylistLinkChange?: (val: string) => void;
   onTransferLink?: () => void;
-  showPlaylistLink?: boolean;
+  enableTransferByLink?: boolean;
 };
 
 export default React.memo(function ServiceCard(props: Props) {
@@ -110,8 +110,7 @@ export default React.memo(function ServiceCard(props: Props) {
 
       {/* Optional login-less playlist link (Spotify) */}
       {!props.isConnected &&
-        props.brand === "spotify" &&
-        props.showPlaylistLink && (
+        props.brand === "spotify" && (
           <div className="mt-4 flex flex-col gap-2">
             <p className="text-sm text-muted-foreground text-center mb-2">
               Or transfer a single playlist by entering the playlist link.
@@ -120,6 +119,7 @@ export default React.memo(function ServiceCard(props: Props) {
               placeholder="Enter Spotify playlist link here..."
               className="w-full"
               value={props.playlistLink}
+              disabled={!props.enableTransferByLink}
               onChange={(e) => props.onPlaylistLinkChange?.(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") props.onTransferLink?.();
@@ -127,6 +127,7 @@ export default React.memo(function ServiceCard(props: Props) {
             />
             <Button
               className={`w-full ${primaryBtn}`}
+              disabled={!props.enableTransferByLink}
               onClick={props.onTransferLink}
             >
               Transfer

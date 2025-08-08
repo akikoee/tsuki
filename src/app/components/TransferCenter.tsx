@@ -321,7 +321,7 @@ export default function TransferCenter() {
           error={fetchSpotifyError}
           playlists={spotifyPlaylists}
           isOtherServiceConnected={!!appleMusicLoginState}
-          showPlaylistLink={!!appleMusicLoginState}
+          enableTransferByLink={!!appleMusicLoginState}
           playlistLink={spotifyPlaylistLink}
           onPlaylistLinkChange={setSpotifyPlaylistLink}
           onTransferLink={handleTransferLink}
