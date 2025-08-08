@@ -44,7 +44,7 @@ export default React.memo(function ProgressArea(props: Props) {
                 <g clipPath="url(#chevClip)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
                   {Array.from({ length: 20 }).map((_, i) => {
                     const x = i * 21 + 6;
-                    const idx = props.direction === "left" ? 19 - i : i;
+                    const idx = i;
                     const t = idx / 19;
                     const start = props.direction === "left" ? "#e11d48" : "#059669";
                     const end = props.direction === "left" ? "#059669" : "#e11d48";
