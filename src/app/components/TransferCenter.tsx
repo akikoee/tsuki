@@ -1,11 +1,13 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useAuthStore } from "@/lib/authStore";
-import { getUser } from "@/lib/database";
-import { Playlists } from "@/models/playlist";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getUser } from "@/lib/db/database";
+import { usePlaylistStore } from "@/lib/playlistStore";
+import { useTransferStore } from "@/lib/transferStore";
+import { Account } from "@prisma/client";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import ProgressArea from "./ProgressArea";
 import ServiceCard from "./ServiceCard";
 
@@ -17,44 +19,47 @@ export default function TransferCenter() {
     appleMusicLoginState,
     setSpotifyLoginState,
     setAppleMusicLoginState,
+    isAuthorizingApple,
+    setIsAuthorizingApple,
     musicUserToken,
     setMusicUserToken,
     setMusicStorefront,
     setDevToken,
   } = useAuthStore();
 
-  const [spotifyPlaylists, setSpotifyPlaylists] = useState<Playlists | null>(
-    null
-  );
-  const [appleMusicPlaylists, setAppleMusicPlaylists] =
-    useState<Playlists | null>(null);
+  const {
+    spotifyPlaylists,
+    appleMusicPlaylists,
+    isFetchingPlaylists,
+    fetchSpotifyError,
+    fetchAppleMusicError,
+    setSpotifyPlaylists,
+    setAppleMusicPlaylists,
+    setIsFetchingPlaylists,
+    setFetchSpotifyError,
+    setFetchAppleMusicError,
+  } = usePlaylistStore();
 
-  const [isAuthorizingApple, setIsAuthorizingApple] = useState(false);
-  const [isFetchingPlaylists, setIsFetchingPlaylists] = useState(false);
-  const [, setFetchError] = useState<string | null>(null);
-  const [fetchSpotifyError, setFetchSpotifyError] = useState<string | null>(
-    null
-  );
-  const [fetchAppleMusicError, setFetchAppleMusicError] = useState<
-    string | null
-  >(null);
+  const {
+    spotifyPlaylistLink,
+    isTransferring,
+    transferDirection,
+    currentPlaylistName,
+    currentTotalTracks,
+    currentIndex,
+    trackEvents,
+    fetchError,
+    setSpotifyPlaylistLink,
+    setIsTransferring,
+    setTransferDirection,
+    setCurrentPlaylistName,
+    setCurrentTotalTracks,
+    setCurrentIndex,
+    setTrackEvents,
+    setFetchError,
+    addTrackEvent,
+  } = useTransferStore();
 
-  const [spotifyPlaylistLink, setSpotifyPlaylistLink] = useState<string>("");
-  const [isTransferring, setIsTransferring] = useState(false);
-  const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(
-    null
-  );
-  const [currentTotalTracks, setCurrentTotalTracks] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [trackEvents, setTrackEvents] = useState<
-    {
-      index: number;
-      name: string;
-      status: "matched" | "low-confidence" | "unmatched";
-      appleSongId?: string;
-      confidence?: number;
-    }[]
-  >([]);
   const sseRef = useRef<EventSource | null>(null);
 
   const progress = useMemo(() => {
@@ -62,10 +67,6 @@ export default function TransferCenter() {
     const pct = Math.round(((currentIndex + 1) / currentTotalTracks) * 100);
     return Math.max(0, Math.min(100, isFinite(pct) ? pct : 0));
   }, [currentIndex, currentTotalTracks]);
-
-  const [transferDirection, setTransferDirection] = useState<
-    "idle" | "right" | "left"
-  >("idle");
 
   const startSseTransfer = useCallback(
     (params: {
@@ -107,16 +108,13 @@ export default function TransferCenter() {
             setTrackEvents([]);
           } else if (data.type === "track") {
             setCurrentIndex(data.index);
-            setTrackEvents((prev) => [
-              ...prev,
-              {
-                index: data.index,
-                name: data.trackName,
-                status: data.status,
-                appleSongId: data.appleSongId,
-                confidence: data.confidence,
-              },
-            ]);
+            addTrackEvent({
+              index: data.index,
+              name: data.trackName,
+              status: data.status,
+              appleSongId: data.appleSongId,
+              confidence: data.confidence,
+            });
           } else if (data.type === "playlist-complete") {
           } else if (data.type === "done") {
             setIsTransferring(false);
@@ -140,7 +138,16 @@ export default function TransferCenter() {
         sseRef.current = null;
       };
     },
-    []
+    [
+      setIsTransferring,
+      setTransferDirection,
+      setTrackEvents,
+      setCurrentIndex,
+      setCurrentTotalTracks,
+      setCurrentPlaylistName,
+      setFetchError,
+      addTrackEvent,
+    ]
   );
 
   const handleTransferRightAll = useCallback(
@@ -223,7 +230,7 @@ export default function TransferCenter() {
         }),
       });
     } catch (e) {
-      setFetchError(
+      setFetchAppleMusicError(
         e instanceof Error ? e.message : "Apple Music authorization failed"
       );
     } finally {
@@ -236,6 +243,7 @@ export default function TransferCenter() {
     setMusicStorefront,
     setDevToken,
     waitForMusicKit,
+    setFetchAppleMusicError,
   ]);
 
   useEffect(() => {
@@ -245,12 +253,12 @@ export default function TransferCenter() {
       if (!user) return;
 
       const spotifyAccount = user.accounts.find(
-        (account) => account.providerId === "spotify"
+        (account: Account) => account.providerId === "spotify"
       );
       console.log("spotifyAccount", spotifyAccount);
       setSpotifyLoginState(spotifyAccount !== undefined);
       const appleAccount = user.accounts.find(
-        (account) => account.providerId === "apple"
+        (account: Account) => account.providerId === "apple"
       );
       setAppleMusicLoginState(appleAccount !== undefined);
       setMusicUserToken(appleAccount?.appleMusicUserToken || null);
@@ -277,7 +285,7 @@ export default function TransferCenter() {
 
     (async () => {
       setIsFetchingPlaylists(true);
-      setFetchError(null);
+      setFetchSpotifyError(null);
       const playlists = await fetch("/api/spotify/playlists").then((res) => {
         if (!res.ok) {
           setFetchSpotifyError(res.statusText);
@@ -288,7 +296,12 @@ export default function TransferCenter() {
       setSpotifyPlaylists(playlists);
       setIsFetchingPlaylists(false);
     })();
-  }, [spotifyLoginState]);
+  }, [
+    spotifyLoginState,
+    setIsFetchingPlaylists,
+    setFetchSpotifyError,
+    setSpotifyPlaylists,
+  ]);
 
   useEffect(() => {
     if (isAuthorizingApple || !appleMusicLoginState) return;
@@ -306,7 +319,13 @@ export default function TransferCenter() {
       });
       setAppleMusicPlaylists(playlists);
     })();
-  }, [isAuthorizingApple, appleMusicLoginState, musicUserToken]);
+  }, [
+    isAuthorizingApple,
+    appleMusicLoginState,
+    musicUserToken,
+    setAppleMusicPlaylists,
+    setFetchAppleMusicError,
+  ]);
 
   if (isPending) return <Skeleton className="h-10 w-full" />;
 
@@ -334,6 +353,7 @@ export default function TransferCenter() {
           isTransferring={isTransferring}
           currentPlaylistName={currentPlaylistName}
           progressPercent={progress}
+          fetchError={fetchError}
           events={trackEvents}
         />
 

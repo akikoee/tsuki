@@ -1,4 +1,4 @@
-import { Track } from "@/models/playlist";
+import { Track } from "@/models/thirdparty";
 
 export type MatchResult =
   | { status: "matched"; appleSongId: string; confidence: number }

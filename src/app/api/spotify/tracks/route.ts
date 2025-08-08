@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth";
-import { getUser } from "@/lib/database";
-import { Album, Artist, SpotifyTrack, Track } from "@/models/playlist";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/lib/db/database";
+import { Album, Artist, SpotifyTrack, Track } from "@/models/thirdparty";
 import { Account } from "@prisma/client";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";

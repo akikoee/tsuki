@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlaylistItem } from "@/models/playlist";
+import { PlaylistItem } from "@/models/thirdparty";
 import React from "react";
 import LoginButton from "./LoginButton";
 import PlaylistCard from "./PlaylistCard";

@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth";
-import { getUser } from "@/lib/database";
-import { prisma } from "@/lib/prisma";
-import { Playlists } from "@/models/playlist";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/lib/db/database";
+import { prisma } from "@/lib/db/prisma";
+import { Playlists } from "@/models/thirdparty";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 

@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { getUser } from "@/lib/database";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/lib/db/database";
 import { matchAppleTrackToSpotify } from "@/lib/matching/apple-to-spotify";
 import { getAppleDeveloperToken } from "@/lib/utils";
 import { headers } from "next/headers";

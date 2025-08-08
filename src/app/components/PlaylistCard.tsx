@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { PlaylistItem } from "@/models/playlist";
+import { PlaylistItem } from "@/models/thirdparty";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";

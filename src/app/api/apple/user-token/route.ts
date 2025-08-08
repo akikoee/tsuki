@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { getUser, updateAppleMusicUserToken } from "@/lib/database";
+import { auth } from "@/lib/auth/auth";
+import { getUser, updateAppleMusicUserToken } from "@/lib/db/database";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

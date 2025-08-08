@@ -59,12 +59,6 @@ export interface PlaylistItem {
   tracks: { items: Track[]; total: number };
 }
 
-export interface SpotifyTrackResponse {
-  items: SpotifyTrack[];
-  next: string | null;
-  total: number;
-}
-
 export interface SpotifyTrack {
   preview_url: string | null;
   available_markets: string[];

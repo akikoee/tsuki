@@ -1,12 +1,12 @@
-import { auth } from "@/lib/auth";
-import { getUser } from "@/lib/database";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/lib/db/database";
 import { getAppleDeveloperToken } from "@/lib/utils";
 import {
   CreateApplePlaylist,
   LibraryPlaylistRequest,
   PlaylistItem,
   Playlists,
-} from "@/models/playlist";
+} from "@/models/thirdparty";
 
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";

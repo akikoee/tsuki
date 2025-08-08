@@ -1,8 +1,8 @@
-import { auth } from "@/lib/auth";
-import { getUser } from "@/lib/database";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/lib/db/database";
 import { matchSpotifyTrackToApple } from "@/lib/matching/spotify-to-apple";
 import { getAppleDeveloperToken } from "@/lib/utils";
-import { PlaylistItem, Track } from "@/models/playlist";
+import { PlaylistItem, Track } from "@/models/thirdparty";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
