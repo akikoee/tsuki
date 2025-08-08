@@ -32,7 +32,7 @@ export default React.memo(function ProgressArea(props: Props) {
               >
                 <defs>
                   <clipPath id="chevClip">
-                    <rect x={props.direction === "left" ? CHEVRON_WIDTH - progressWidthPx : 0} y="0" width={progressWidthPx} height="28" />
+                    <rect x={0} y="0" width={progressWidthPx} height="28" />
                   </clipPath>
                 </defs>
                 <g stroke="rgba(163,163,163,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
