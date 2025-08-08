@@ -1,0 +1,88 @@
+---
+globs: *.tsx,*.ts,*.css,*.json,*.mjs, *.md
+alwaysApply: false
+---
+
+Design system guidelines for a Ghibli-esque, spring-themed experience with gentle sakura vibes. Prioritize calm, airy UI, soft gradients, subtle motion, and readable typography. Use ShadCN components with Tailwind for styling and keep things lightweight and accessible.
+
+Scope:
+- Applies to the marketing/landing surfaces and simple product flows (e.g., connect Spotify / Apple Music, transfer playlists).
+- Complements the `next` rule; follow security, performance, and coding standards there.
+
+Core vibe:
+- Soft spring gradient backgrounds, light glassy cards, subtle shadows, rounded corners, warm greens and blooming pinks.
+- Motion is breezy and minimal. Avoid harsh contrasts and heavy borders.
+
+Color and surfaces:
+- Background: gradient from `from-sky-50 via-pink-50 to-rose-50`.
+- Emphasis colors:
+  - Emerald family for Spotify interactions: `emerald-50/100/600/700`.
+  - Rose family for Apple Music interactions: `rose-50/100/500/600`.
+- Cards: `bg-white/70 backdrop-blur-md border-rose-100` (or `border-emerald-100` as appropriate).
+- Text: default foreground; headings in `text-emerald-900`.
+
+Typography:
+- Keep Geist for body; headings `font-semibold` (500–600). Avoid overly decorative fonts by default.
+- Use concise headings and short helper copy. Keep line-length to ~60–70ch.
+
+Layout:
+- Max content width: `max-w-3xl` centered.
+- Generous spacing: `py-16` sections, `space-y-3` stacks.
+- Use ShadCN `Card` to group flows; avoid dense forms.
+
+Components (ShadCN first):
+- Button: primary emerald for Spotify, primary rose for Apple.
+  - Spotify: `className="bg-emerald-600 hover:bg-emerald-700"`
+  - Apple: `className="bg-rose-500 hover:bg-rose-600"`
+- Badge: connection status badges
+  - Connected: solid brand color (emerald/rose 600)
+  - Not connected: light tint (emerald/rose 200) with dark text
+- Card: `bg-white/70 backdrop-blur-md border-[brand]-100` and `rounded-xl`
+- Separator: brand-tinted (`bg-emerald-100` or `bg-rose-100`)
+- Tabs/Input/Label: use defaults; style with brand tints when needed.
+
+Sakura background motion:
+- Use a minimal, CSS-only petal effect to avoid runtime JS.
+- Petals: 10–16 elements, randomized `left`, `animationDelay`, and `animationDuration`.
+- Prefer transforms and opacity; keep animation durations ~10–15s, linear, infinite.
+- Respect `prefers-reduced-motion`: disable or significantly reduce animation.
+- Implementation reference:
+  - Container: `absolute inset-0 pointer-events-none overflow-hidden`
+  - Petal element class: `.petal` with keyframes `fall` (already present in `globals.css`).
+
+Imagery and iconography:
+- Prefer simple SVGs and Lucide icons. Avoid photo-realistic imagery.
+- If using images, always use `next/image` with explicit sizes and `loading="lazy"`.
+
+Accessibility:
+- Maintain sufficient color contrast (check badges and buttons on tinted surfaces).
+- Provide visible focus states (inherit from ShadCN/Tailwind defaults).
+- Honor `prefers-reduced-motion` for the sakura effect.
+
+Security:
+- Do not introduce `dangerouslySetInnerHTML` or untrusted HTML.
+- Follow OAuth flows via existing auth utilities; do not inline secrets.
+
+Performance:
+- Keep petal count modest; avoid offscreen heavy DOM.
+- Use CSS for motion; no requestAnimationFrame loops.
+- Use RSC where possible; limit client-only sections to interaction surfaces.
+
+Default composition (hero + setup):
+- Page wrapper: `relative min-h-dvh bg-gradient-to-b from-sky-50 via-pink-50 to-rose-50`
+- Header: transparent background, brand chip (`bg-emerald-200`) and subtle label “Playlist Bridge”.
+- Hero: heading `text-emerald-900`, helper copy `text-muted-foreground`, optional `Badge` like “Spring Preview”.
+- Content: `Card` wrapping flows like connect Spotify/Apple with brand-tinted sections.
+
+Do / Don’t:
+- Do: keep interfaces airy, soft, and intentional; use brand tints by context (emerald ↔ Spotify, rose ↔ Apple).
+- Do: compose with ShadCN components; prefer utility classes over ad-hoc inline styles.
+- Don’t: add heavy animations, parallax, or large image backgrounds.
+- Don’t: mix too many accent colors; stay in spring palette.
+
+Quick checklist for new views:
+- Uses gradient spring background and optional sakura layer.
+- ShadCN components for structure; brand-consistent buttons and badges.
+- Accessible contrast, focus states, and reduced-motion support.
+- No unnecessary client state/effects; avoid large dependencies.
+

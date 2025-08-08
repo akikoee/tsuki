@@ -1,0 +1,27 @@
+import { clsx, type ClassValue } from "clsx";
+import { SignJWT, importPKCS8 } from "jose";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+const TEAM_ID = process.env.APPLE_MUSIC_TEAM_ID!;
+const KEY_ID = process.env.APPLE_MUSIC_KEY_ID!;
+// Fix newline escaping when using env vars
+const PRIVATE_KEY = (process.env.APPLE_MUSIC_PRIVATE_KEY || "").replace(
+  /\\n/g,
+  "\n"
+);
+
+export async function getAppleDeveloperToken(): Promise<string> {
+  const key = await importPKCS8(PRIVATE_KEY, "ES256");
+  const now = Math.floor(Date.now() / 1000);
+
+  return await new SignJWT({}) // no 'aud' for MusicKit
+    .setProtectedHeader({ alg: "ES256", kid: KEY_ID })
+    .setIssuer(TEAM_ID)
+    .setIssuedAt(now)
+    .setExpirationTime(now + 60 * 60) // 1 hour for testing; increase later
+    .sign(key);
+}
