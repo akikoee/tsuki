@@ -88,7 +88,11 @@ export default React.memo(function ServiceCard(props: Props) {
                   <PlaylistCard
                     key={playlist.id}
                     playlist={playlist}
-                    onTransfer={props.onTransferOne && props.isOtherServiceConnected ? props.onTransferOne : undefined}
+                    onTransfer={
+                      props.onTransferOne && props.isOtherServiceConnected
+                        ? props.onTransferOne
+                        : undefined
+                    }
                   />
                 ))}
               </ul>
@@ -109,31 +113,32 @@ export default React.memo(function ServiceCard(props: Props) {
       )}
 
       {/* Optional login-less playlist link (Spotify) */}
-      {!props.isConnected &&
-        props.brand === "spotify" && (
-          <div className="mt-4 flex flex-col gap-2">
-            <p className="text-sm text-muted-foreground text-center mb-2">
-              Or transfer a single playlist by entering the playlist link.
-            </p>
-            <Input
-              placeholder="Enter Spotify playlist link here..."
-              className="w-full"
-              value={props.playlistLink}
-              disabled={!props.enableTransferByLink}
-              onChange={(e) => props.onPlaylistLinkChange?.(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") props.onTransferLink?.();
-              }}
-            />
-            <Button
-              className={`w-full ${primaryBtn}`}
-              disabled={!props.enableTransferByLink}
-              onClick={props.onTransferLink}
-            >
-              Transfer
-            </Button>
-          </div>
-        )}
+      {!props.isConnected && props.brand === "spotify" && (
+        <div className="mt-4 flex flex-col gap-2">
+          <p className="text-sm text-muted-foreground text-center mb-2">
+            Or transfer a single playlist by entering the playlist link
+            <br />
+            (Only available if you have authorized Apple Music)
+          </p>
+          <Input
+            placeholder="Enter Spotify playlist link here..."
+            className="w-full"
+            value={props.playlistLink}
+            disabled={!props.enableTransferByLink}
+            onChange={(e) => props.onPlaylistLinkChange?.(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") props.onTransferLink?.();
+            }}
+          />
+          <Button
+            className={`w-full ${primaryBtn}`}
+            disabled={!props.enableTransferByLink}
+            onClick={props.onTransferLink}
+          >
+            Transfer
+          </Button>
+        </div>
+      )}
     </div>
   );
 });
