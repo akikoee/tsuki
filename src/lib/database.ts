@@ -1,5 +1,6 @@
 "use server";
 
+import { UserWithAccounts } from "@/models/prisma";
 import { prisma } from "./prisma";
 export async function getUser(userId: string) {
   const user = await prisma.user.findUnique({
@@ -14,10 +15,14 @@ export async function getUser(userId: string) {
       },
     },
   });
-  return user;
+  return user as UserWithAccounts;
 }
 
-export async function updateAppleMusicUserToken(userId: string, token: string, storefrontId: string) {
+export async function updateAppleMusicUserToken(
+  userId: string,
+  token: string,
+  storefrontId: string
+) {
   await prisma.account.updateMany({
     where: {
       userId: userId,
