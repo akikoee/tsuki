@@ -124,14 +124,14 @@
 /* Sakura petals animation */
 @keyframes fall {
   0% {
-    transform: translate3d(0, -10%, 0) rotate(0deg);
+    transform: translate3d(var(--startX, 0), -10vh, 0) rotate(0deg);
     opacity: 0.0;
   }
   10% {
     opacity: 0.8;
   }
   100% {
-    transform: translate3d(-20vw, 110%, 0) rotate(540deg);
+    transform: translate3d(var(--endX, -20vw), 110vh, 0) rotate(var(--spin, 540deg));
     opacity: 0.0;
   }
 }
@@ -139,8 +139,8 @@
 .petal {
   position: absolute;
   top: -2rem;
-  width: 12px;
-  height: 12px;
+  width: var(--petal-size, 12px);
+  height: var(--petal-size, 12px);
   background: radial-gradient(circle at 30% 30%, oklch(0.95 0.05 20) 40%, oklch(0.92 0.02 20) 41%);
   border-radius: 70% 30% 70% 30% / 60% 40% 60% 40%;
   box-shadow: 0 0 0 1px oklch(0.93 0.03 20 / 0.4) inset, 0 4px 10px oklch(0.84 0.04 20 / 0.15);

@@ -1,6 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
+import type { CSSProperties } from "react";
 import Header from "./components/Header";
 import TransferCenter from "./components/TransferCenter";
+
+type PetalStyle = CSSProperties & {
+  "--petal-size"?: string;
+  "--endX"?: string;
+  "--spin"?: string;
+};
 
 export default function Home() {
   return (
@@ -8,17 +15,36 @@ export default function Home() {
       <Header />
       {/* Sakura petals background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {Array.from({ length: 14 }).map((_, index) => (
-          <span
-            key={index}
-            className="petal"
-            style={{
-              left: `${(index * 7) % 100}%`,
-              animationDelay: `${(index % 7) * 0.9}s`,
-              animationDuration: `${10 + (index % 5) * 3}s`,
-            }}
-          />
-        ))}
+        {Array.from({ length: 20 }).map((_, index) => {
+          // Pseudo-random values per index to avoid obvious lines
+          const rand = (seed: number) => {
+            const x = Math.sin(seed * 999.1337) * 10000;
+            return x - Math.floor(x);
+          };
+          const r1 = rand(index + 1);
+          const r2 = rand(index + 2);
+          const r3 = rand(index + 3);
+          const r4 = rand(index + 4);
+          const r5 = rand(index + 5);
+
+          const leftPercent = Math.round(r1 * 100); // 0–100%
+          const delayS = (r2 * 7).toFixed(2); // 0–7s
+          const durationS = (10 + r3 * 6).toFixed(2); // 10–16s
+          const sizePx = Math.round(8 + r4 * 10); // 8–18px
+          const driftVw = (-(10 + r5 * 25)).toFixed(2); // -10vw to -35vw (mostly left)
+          const spinDeg = Math.round(360 + r3 * 540); // 360–900deg
+
+          const style: PetalStyle = {
+            left: `${leftPercent}%`,
+            animationDelay: `${delayS}s`,
+            animationDuration: `${durationS}s`,
+            "--petal-size": `${sizePx}px`,
+            "--endX": `${driftVw}vw`,
+            "--spin": `${spinDeg}deg`,
+          };
+
+          return <span key={index} className="petal" style={style} />;
+        })}
       </div>
       <main className="relative container mx-auto px-4 py-16">
         <div className="mx-auto max-w-5xl space-y-3 text-center">
