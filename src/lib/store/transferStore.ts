@@ -34,7 +34,7 @@ type TransferStore = {
 export const useTransferStore = create<TransferStore>((set) => ({
   spotifyPlaylistLink: "",
   isTransferring: false,
-  transferDirection: "idle",
+  transferDirection: "right",
   currentPlaylistName: null,
   currentTotalTracks: 0,
   currentIndex: 0,

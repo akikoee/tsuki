@@ -2,10 +2,10 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth/auth-client";
-import { useAuthStore } from "@/lib/authStore";
 import { getUser } from "@/lib/db/database";
-import { usePlaylistStore } from "@/lib/playlistStore";
-import { useTransferStore } from "@/lib/transferStore";
+import { useAuthStore } from "@/lib/store/authStore";
+import { usePlaylistStore } from "@/lib/store/playlistStore";
+import { useTransferStore } from "@/lib/store/transferStore";
 import { Account } from "@prisma/client";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import ProgressArea from "./ProgressArea";
@@ -331,7 +331,8 @@ export default function TransferCenter() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_420px_1fr] md:items-stretch">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_minmax(280px,420px)_1fr] lg:items-stretch">
+        <div className="min-w-0">
         <ServiceCard
           title="Spotify"
           brand="spotify"
@@ -347,6 +348,7 @@ export default function TransferCenter() {
           onTransferAll={handleTransferRightAll}
           onTransferOne={handleTransferRightOne}
         />
+        </div>
 
         <ProgressArea
           direction={transferDirection}
@@ -357,6 +359,7 @@ export default function TransferCenter() {
           events={trackEvents}
         />
 
+        <div className="min-w-0">
         <ServiceCard
           title="Apple Music"
           brand="apple"
@@ -373,6 +376,7 @@ export default function TransferCenter() {
           onTransferAll={handleTransferLeftAll}
           onTransferOne={handleTransferLeftOne}
         />
+        </div>
       </div>
     </div>
   );

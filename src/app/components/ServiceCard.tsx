@@ -83,7 +83,7 @@ export default React.memo(function ServiceCard(props: Props) {
                 {props.playlists.items.length} playlists found
               </p>
               <Separator className={`my-3 ${sep}`} />
-              <ul className="mt-2 h-[400px] space-y-2 overflow-y-auto overscroll-contain">
+              <ul className="mt-2 max-h-[45vh] md:max-h-[60vh] space-y-2 overflow-y-auto overscroll-contain">
                 {props.playlists.items.map((playlist) => (
                   <PlaylistCard
                     key={playlist.id}
@@ -107,7 +107,7 @@ export default React.memo(function ServiceCard(props: Props) {
               )}
             </div>
           ) : (
-            <Skeleton className="h-[400px] w-full" />
+            <Skeleton className="h-[40vh] md:h-[50vh] w-full" />
           )}
         </div>
       )}
