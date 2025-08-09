@@ -67,51 +67,56 @@ export default React.memo(function ServiceCard(props: Props) {
             </Button>
           </div>
         )}
-
-      {props.isConnected && (
-        <div className="mt-4">
-          <p className="text-sm text-muted-foreground">
-            {props.isLoading ? "Fetching playlists..." : ""}
-          </p>
-          {props.error && (
-            <p className="mt-2 text-sm text-red-500">{props.error}</p>
-          )}
-
-          {props.playlists ? (
-            <div className="mt-4">
-              <p className="text-sm text-muted-foreground">
-                {props.playlists.items.length} playlists found
+      <div className="mt-4">
+        {!props.isConnected && props.error && (
+          <p className="mt-2 text-sm text-red-500 text-center">{props.error}</p>
+        )}
+        {props.isConnected && (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {props.isLoading ? "Fetching playlists..." : ""}
+            </p>
+            {props.error && (
+              <p className="mt-2 text-sm text-red-500 text-center">
+                {props.error}
               </p>
-              <Separator className={`my-3 ${sep}`} />
-              <ul className="mt-2 max-h-[45vh] md:max-h-[60vh] space-y-2 overflow-y-auto overscroll-contain">
-                {props.playlists.items.map((playlist) => (
-                  <PlaylistCard
-                    key={playlist.id}
-                    playlist={playlist}
-                    onTransfer={
-                      props.onTransferOne && props.isOtherServiceConnected
-                        ? props.onTransferOne
-                        : undefined
-                    }
-                  />
-                ))}
-              </ul>
-              <Separator className={`my-3 ${sep}`} />
-              {props.onTransferAll && props.isOtherServiceConnected && (
-                <Button
-                  className={`w-full ${primaryBtn}`}
-                  onClick={props.onTransferAll}
-                >
-                  Transfer all playlists
-                </Button>
-              )}
-            </div>
-          ) : (
-            <Skeleton className="h-[40vh] md:h-[50vh] w-full" />
-          )}
-        </div>
-      )}
+            )}
 
+            {props.playlists ? (
+              <div className="mt-4">
+                <p className="text-sm text-muted-foreground">
+                  {props.playlists.items.length} playlists found
+                </p>
+                <Separator className={`my-3 ${sep}`} />
+                <ul className="mt-2 max-h-[45vh] md:max-h-[60vh] space-y-2 overflow-y-auto overscroll-contain">
+                  {props.playlists.items.map((playlist) => (
+                    <PlaylistCard
+                      key={playlist.id}
+                      playlist={playlist}
+                      onTransfer={
+                        props.onTransferOne && props.isOtherServiceConnected
+                          ? props.onTransferOne
+                          : undefined
+                      }
+                    />
+                  ))}
+                </ul>
+                <Separator className={`my-3 ${sep}`} />
+                {props.onTransferAll && props.isOtherServiceConnected && (
+                  <Button
+                    className={`w-full ${primaryBtn}`}
+                    onClick={props.onTransferAll}
+                  >
+                    Transfer all playlists
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <Skeleton className="h-[40vh] md:h-[50vh] w-full" />
+            )}
+          </>
+        )}
+      </div>
       {/* Optional login-less playlist link (Spotify) */}
       {props.brand === "spotify" && (
         <div className="mt-4 flex flex-col gap-2">

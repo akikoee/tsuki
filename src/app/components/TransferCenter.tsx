@@ -166,14 +166,33 @@ export default function TransferCenter() {
     (id: string) => startSseTransfer({ playlistIds: [id], direction: "left" }),
     [startSseTransfer]
   );
-  const handleTransferLink = useCallback(
-    () =>
-      startSseTransfer({
-        playlistUrl: spotifyPlaylistLink,
-        direction: "right",
-      }),
-    [spotifyPlaylistLink, startSseTransfer]
-  );
+  const handleTransferLink = useCallback(() => {
+    if (!spotifyPlaylistLink || spotifyPlaylistLink.length === 0) {
+      setFetchSpotifyError("invalid playlist link");
+      return;
+    }
+
+    if (!spotifyPlaylistLink.includes("open.spotify.com/playlist/")) {
+      setFetchSpotifyError("invalid playlist link");
+      return;
+    }
+
+    const playlistId = spotifyPlaylistLink.split("/playlist/")[1];
+    if (!playlistId) {
+      setFetchSpotifyError("invalid playlist link");
+      return;
+    }
+
+    if (!playlistId.match(/^[a-zA-Z0-9]+$/)) {
+      setFetchSpotifyError("invalid playlist link");
+      return;
+    }
+
+    startSseTransfer({
+      playlistIds: [playlistId],
+      direction: "right",
+    });
+  }, [spotifyPlaylistLink, setFetchSpotifyError, startSseTransfer]);
 
   const waitForMusicKit = useCallback((): Promise<unknown> => {
     return new Promise((resolve) => {
@@ -333,21 +352,21 @@ export default function TransferCenter() {
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_minmax(280px,420px)_1fr] lg:items-stretch">
         <div className="min-w-0">
-        <ServiceCard
-          title="Spotify"
-          brand="spotify"
-          isConnected={!!spotifyLoginState}
-          isLoading={isFetchingPlaylists}
-          error={fetchSpotifyError}
-          playlists={spotifyPlaylists}
-          isOtherServiceConnected={!!appleMusicLoginState}
-          enableTransferByLink={!!appleMusicLoginState}
-          playlistLink={spotifyPlaylistLink}
-          onPlaylistLinkChange={setSpotifyPlaylistLink}
-          onTransferLink={handleTransferLink}
-          onTransferAll={handleTransferRightAll}
-          onTransferOne={handleTransferRightOne}
-        />
+          <ServiceCard
+            title="Spotify"
+            brand="spotify"
+            isConnected={!!spotifyLoginState}
+            isLoading={isFetchingPlaylists}
+            error={fetchSpotifyError}
+            playlists={spotifyPlaylists}
+            isOtherServiceConnected={!!appleMusicLoginState}
+            enableTransferByLink={!!appleMusicLoginState}
+            playlistLink={spotifyPlaylistLink}
+            onPlaylistLinkChange={setSpotifyPlaylistLink}
+            onTransferLink={handleTransferLink}
+            onTransferAll={handleTransferRightAll}
+            onTransferOne={handleTransferRightOne}
+          />
         </div>
 
         <ProgressArea
@@ -360,22 +379,22 @@ export default function TransferCenter() {
         />
 
         <div className="min-w-0">
-        <ServiceCard
-          title="Apple Music"
-          brand="apple"
-          isConnected={!!appleMusicLoginState}
-          isLoading={isFetchingPlaylists}
-          error={fetchAppleMusicError}
-          playlists={appleMusicPlaylists}
-          isOtherServiceConnected={!!spotifyLoginState}
-          onAuthorizeApple={
-            appleMusicLoginState && !musicUserToken
-              ? handleConnectAppleMusic
-              : undefined
-          }
-          onTransferAll={handleTransferLeftAll}
-          onTransferOne={handleTransferLeftOne}
-        />
+          <ServiceCard
+            title="Apple Music"
+            brand="apple"
+            isConnected={!!appleMusicLoginState}
+            isLoading={isFetchingPlaylists}
+            error={fetchAppleMusicError}
+            playlists={appleMusicPlaylists}
+            isOtherServiceConnected={!!spotifyLoginState}
+            onAuthorizeApple={
+              appleMusicLoginState && !musicUserToken
+                ? handleConnectAppleMusic
+                : undefined
+            }
+            onTransferAll={handleTransferLeftAll}
+            onTransferOne={handleTransferLeftOne}
+          />
         </div>
       </div>
     </div>
