@@ -37,7 +37,7 @@ export default React.memo(function ServiceCard(props: Props) {
   const borderColor = `border-${accent}-100`;
   const bgTint = `bg-${accent}-50/60`;
   const sep = `bg-${accent}-100`;
-  const primaryBtn = `bg-${accent}-500 hover:bg-${accent}-600`;
+  const primaryBtn = `w-full bg-${accent}-500 hover:bg-${accent}-600`;
 
   return (
     <div className={`rounded-xl border ${borderColor} ${bgTint} p-4`}>
@@ -113,7 +113,7 @@ export default React.memo(function ServiceCard(props: Props) {
       )}
 
       {/* Optional login-less playlist link (Spotify) */}
-      {!props.isConnected && props.brand === "spotify" && (
+      {props.brand === "spotify" && (
         <div className="mt-4 flex flex-col gap-2">
           <p className="text-sm text-muted-foreground text-center mb-2">
             Or transfer a single playlist by entering the playlist link

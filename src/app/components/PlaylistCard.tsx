@@ -40,6 +40,7 @@ export default React.memo(function PlaylistCard(props: {
           width={32}
           height={32}
           className="rounded-md"
+          unoptimized
         />
 
         <p className={`text-sm font-medium ${textColor}`}>

@@ -70,8 +70,9 @@ function parseSpotifyPlaylistId(input: string): string | null {
     const idx = parts.findIndex((p) => p === "playlist");
     if (idx !== -1 && parts[idx + 1]) return parts[idx + 1];
     return null;
-  } catch {
+  } catch (e) {
     // maybe just an ID was passed
+    console.error(e);
     if (/^[a-zA-Z0-9]+$/.test(input)) return input;
     return null;
   }
@@ -212,6 +213,11 @@ async function fetchSpotifyPlaylistTracks(token: string, playlistId: string) {
     const data = await res.json();
     for (const it of data.items as Array<{ track: SpotifyTrackLite }>) {
       const tt = it.track;
+      if (!tt) {
+        console.error("Track was null in Spotify playlist: ", playlistId);
+        continue;
+      }
+
       tracks.items.push({
         id: tt.id,
         name: tt.name,
@@ -425,10 +431,13 @@ export async function GET(request: NextRequest) {
       await writer.close();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Unknown error";
+      console.error(e);
       await send({ type: "error", message });
       try {
         await writer.close();
-      } catch {}
+      } catch (e) {
+        console.error(e);
+      }
     }
   })();
 
